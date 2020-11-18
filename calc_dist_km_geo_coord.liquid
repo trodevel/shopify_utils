@@ -1,0 +1,98 @@
+{% comment %}
+
+input: lat1, lon1, lat2, lon2
+output: calc_dist_km_geo_coord
+
+Reference:
+
+https://stackoverflow.com/questions/365826/calculate-distance-between-2-gps-coordinates
+
+function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
+  var earthRadiusKm = 6371;
+
+  var dLat = degreesToRadians(lat2-lat1);
+  var dLon = degreesToRadians(lon2-lon1);
+
+  lat1 = degreesToRadians(lat1);
+  lat2 = degreesToRadians(lat2);
+
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2); 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  return earthRadiusKm * c;
+}
+
+{% endcomment %}
+
+{% assign d_lat_deg = lat2 | minus: lat1 %}
+{% assign d_lon_deg = lon2 | minus: lon1 %}
+
+{% include 'math_deg_to_rad' with x: d_lat_deg %}
+{% assign d_lat = math_deg_to_rad %}
+
+{% include 'math_deg_to_rad' with x: d_lon_deg %}
+{% assign d_lon = math_deg_to_rad %}
+
+{% include 'math_deg_to_rad' with x: lat1 %}
+{% assign lat1_r = math_deg_to_rad %}
+ 
+{% include 'math_deg_to_rad' with x: lat2 %}
+{% assign lat2_r = math_deg_to_rad %}
+ 
+{% assign d_lat_div_2 = d_lat | divided_by: 2 %}
+{% assign d_lon_div_2 = d_lon | divided_by: 2 %}
+
+{% include 'math_sin' with x: d_lat_div_2 %}
+{% assign p1_1 = math_sin %}
+
+{% include 'math_sin' with x: d_lon_div_2 %}
+{% assign p2_1 = math_sin %}
+
+{% include 'math_cos' with x: lat1_r %}
+{% assign p2_2 = math_cos %}
+
+{% include 'math_cos' with x: lat2_r %}
+{% assign p2_3 = math_cos %}
+
+{% assign p1 = p1_1 | times: p1_1 %}
+{% assign p2 = p2_1 | times: p2_1 | times: p2_2 | times: p2_3 %}
+
+{% assign a = p1 | plus: p2 %}
+{% assign one_minus_a = 1.0 | minus: a %}
+
+{% include 'math_sqrt_v2' with x: a %}
+{% assign sqrt_a = math_sqrt_v2 %}
+
+{% include 'math_sqrt_v2' with x: one_minus_a %}
+{% assign sqrt_one_minus_a = math_sqrt_v2 %}
+
+{% include 'math_atan2' with y: sqrt_a, x: sqrt_one_minus_a %}
+{% assign cc = math_atan2 %}
+
+{% assign c = cc | times: 2 %}
+
+{% assign EARTH_RADIUS = 6371 %}
+
+{% assign res = c | times: EARTH_RADIUS %}
+
+
+<h4>DEBUG: calc_dist_km_geo_coord: lat1 {{ lat1 }}, lon1 {{ lon1 }}, lat2 {{ lat2 }}, lon2 {{ lon2 }} = {{ res }}</h4>
+
+{% comment %}
+0
+DEBUG: calc_dist_km_geo_coord: lat1 0, lon1 0, lat2 0, lon2 0 = 0.012151718139644753
+Köln - Arlington
+DEBUG: calc_dist_km_geo_coord: lat1 51.5, lon1 0, lat2 38.8, lon2 -77.1 = 5918.1848183566
+Köln - Bonn
+DEBUG: calc_dist_km_geo_coord: lat1 50.950695435874, lon1 6.96545005139455, lat2 50.7214942156105, lon2 7.12295917698835 = 27.78273580358386
+Köln - Koblenz
+DEBUG: calc_dist_km_geo_coord: lat1 50.950695435874, lon1 6.96545005139455, lat2 50.3540051136642, lon2 7.59492278217501 = 79.82154656324592
+Köln - Duisburg
+DEBUG: calc_dist_km_geo_coord: lat1 50.950695435874, lon1 6.96545005139455, lat2 51.4216639940868, lon2 6.79863985550282 = 53.64424424807378
+Köln - HIT
+DEBUG: calc_dist_km_geo_coord: lat1 50.950695435874, lon1 6.96545005139455, lat2 50.90232, lon2 6.97311 = 5.405828292540717
+Köln - Can
+DEBUG: calc_dist_km_geo_coord: lat1 50.950695435874, lon1 6.96545005139455, lat2 50.92239, lon2 6.95947 = 3.175193257328141
+Köln - Lidl
+DEBUG: calc_dist_km_geo_coord: lat1 50.950695435874, lon1 6.96545005139455, lat2 50.90952, lon2 6.96382 = 4.579924529677528
+{% endcomment %}
