@@ -1,0 +1,16 @@
+{% comment %}
+
+input: n/a
+output: get_page_url
+
+{% endcomment %}
+
+{%- capture contentForQuerystring -%}{{ content_for_header }}{%- endcapture -%}
+
+{%- assign res = contentForQuerystring | split:'"pageurl":"' | last | split:'"' | first | split: shop.domain | last |
+   replace:'\/','/' | 
+   replace:'%20',' ' | 
+   replace:'\u0026','&'
+-%}
+
+{% assign get_page_url = res %}
