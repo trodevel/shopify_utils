@@ -73,8 +73,9 @@ function distanceInKmBetweenEarthCoordinates(lat1, lon1, lat2, lon2) {
 
 {% assign EARTH_RADIUS = 6371 %}
 
-{% assign res = c | times: EARTH_RADIUS %}
+{% assign res = c | times: EARTH_RADIUS | round: 3 %}
 
+{% assign calc_dist_km_geo_coord = res %}
 
 <h4>DEBUG: calc_dist_km_geo_coord: lat1 {{ lat1 }}, lon1 {{ lon1 }}, lat2 {{ lat2 }}, lon2 {{ lon2 }} = {{ res }}</h4>
 
