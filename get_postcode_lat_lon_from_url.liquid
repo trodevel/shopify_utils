@@ -1,0 +1,48 @@
+{% comment %}
+
+input: url
+output:
+    get_postcode_lat_lon_from_url__postcode,
+    get_postcode_lat_lon_from_url__lat,
+    get_postcode_lat_lon_from_url__lon,
+    get_postcode_lat_lon_from_url__debug
+
+{% endcomment %}
+
+{% assign postcode = 0 %}
+{% assign lat = 0 %}
+{% assign long = 0 %}
+{% assign debug = 0 %}
+
+{% assign pageParams = url | split:'?' | last %}
+{% assign pageParamsArr = pageParams | split:'&' %}
+
+{% for p in pageParamsArr %}
+      <h7>DEBUG: URL par - {{p}}</h7>
+    {% assign key_val = p | split:'=' %}
+    {% if key_val.size == 2 %}
+        {% assign key = key_val[0] %}
+        {% assign val = key_val[1] | plus: 0 %}
+
+    <h7>DEBUG: key - '{{key}}', val -'{{val}}' </h7>
+
+        {% if key == 'postcode' %}
+            {% assign postcode = val %}
+        {% elsif key == 'lat' %}
+            {% assign lat = val %}
+        {% elsif key == 'lng' %}
+            {% assign long = val %}
+        {% elsif key == 'debug' %}
+            {% assign debug = val %}
+        {% endif %}
+
+    {% endif %}
+
+{% endfor %}
+
+<h4>DEBUG: get_postcode_lat_lon_from_url: postcode - '{{postcode}}', lat -'{{lat}}', lon -'{{lon}}', debug -'{{debug}}' </h4>
+
+{% assign get_postcode_lat_lon_from_url__postcode = postcode %}
+{% assign get_postcode_lat_lon_from_url__lat = lat %}
+{% assign get_postcode_lat_lon_from_url__lon = long %}
+{% assign get_postcode_lat_lon_from_url__debug = debug %}
